@@ -1,0 +1,122 @@
+[gd_scene load_steps=8 format=3 uid="uid://c8paperdoll123"]
+
+[ext_resource type="Script" path="res://scripts/enemies/PaperDoll.gd" id="1_paperdoll"]
+
+[sub_resource type="PlaceholderTexture2D" id="placeholder_texture"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="collision_shape"]
+size = Vector2(28, 28)
+
+[sub_resource type="CircleShape2D" id="detection_shape"]
+radius = 200.0
+
+[sub_resource type="Animation" id="idle_anim"]
+resource_name = "idle"
+length = 1.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, -2), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="walk_anim"]
+resource_name = "walk"
+length = 0.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3, 0.45, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-1, -1), Vector2(0, 0), Vector2(1, -1), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="death_anim"]
+resource_name = "death"
+length = 0.5
+loop_mode = 0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.5708]
+}
+
+[sub_resource type="AnimationLibrary" id="anim_library"]
+_data = {
+"death": SubResource("death_anim"),
+"idle": SubResource("idle_anim"),
+"walk": SubResource("walk_anim")
+}
+
+[node name="PaperDoll" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_paperdoll")
+max_health = 50
+current_health = 50
+move_speed = 100.0
+attack_damage = 10
+detection_range = 200.0
+attack_range = 50.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.9, 0.9, 0.95, 1)
+texture = SubResource("placeholder_texture")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("collision_shape")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("anim_library")
+}
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -16.0
+offset_top = -24.0
+offset_right = 16.0
+offset_bottom = -20.0
+show_percentage = false
+max_value = 50.0
+value = 50.0
+
+[node name="DetectionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+shape = SubResource("detection_shape")
+debug_color = Color(0.25, 0.05, 0.05, 0.1)
